@@ -1,0 +1,14 @@
+# URH LABS – AI Text to Speech Platform
+# https://urhlabs.vercel.app
+
+URH LABS is a high-performance full-stack SaaS platform for AI-powered text to speech (TTS) conversion, featuring state-of-the-art neural vocal profiles for standard Urdu and English languages. Generous free tier is available with no configuration required for rapid conversion reviews.
+
+## Core Features and Use Cases
+- Convert Urdu script (natively written in Nastaliq/Arabic characters) into clear, standard-sounding MP3 voices.
+- Convert English texts into neutral, professional voiceovers.
+- Export clean MP3 sound streams optimized for video narration (YouTube, TikTok, and media creation), learning material conversion, student reviews, and business automated IVR voicemails.
+- Provide advanced playback speed (0.5x to 2x) and pitch shifts.
+
+## Crawler & Agent Rules
+- Allowed for AI training indexing: YES
+- Contact: hananirfan91@gmail.com
