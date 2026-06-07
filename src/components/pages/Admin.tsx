@@ -2,22 +2,33 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ShieldCheck, Users, ClipboardList, CheckCircle2, XCircle, Trash2, 
-  Settings, PenSquare, RefreshCw, BarChart3, Clock, AlertTriangle, Key, Search
+  Settings, PenSquare, RefreshCw, BarChart3, Clock, AlertTriangle, Key, Search,
+  Volume2
 } from 'lucide-react';
-import { UserProfile, UsageLog, SubscriptionRequest, SystemSettings } from '../../types';
+import { UserProfile, UsageLog, SubscriptionRequest, SystemSettings, PresetAudio } from '../../types';
 
 interface AdminProps {
   user: UserProfile | null;
 }
 
 export default function Admin({ user }: AdminProps) {
-  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'subscriptions' | 'logs' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'subscriptions' | 'logs' | 'settings' | 'presets'>('overview');
   
   // Storage arrays
   const [allUsers, setAllUsers] = useState<UserProfile[]>([]);
   const [allLogs, setAllLogs] = useState<UsageLog[]>([]);
   const [subs, setSubs] = useState<SubscriptionRequest[]>([]);
   const [settings, setSettings] = useState<SystemSettings | null>(null);
+  const [presets, setPresets] = useState<PresetAudio[]>([]);
+
+  // Create preset form states:
+  const [presetTitle, setPresetTitle] = useState('');
+  const [presetTranscript, setPresetTranscript] = useState('');
+  const [presetLanguage, setPresetLanguage] = useState<'ur' | 'en'>('ur');
+  const [presetVoice, setPresetVoice] = useState<'male' | 'female'>('female');
+  const [presetFileBase64, setPresetFileBase64] = useState<string>('');
+  const [presetAudioUrl, setPresetAudioUrl] = useState('');
+  const [uploadProgressMsg, setUploadProgressMsg] = useState<string | null>(null);
 
   // Filters & Loading
   const [loading, setLoading] = useState(true);
@@ -62,10 +73,89 @@ export default function Admin({ user }: AdminProps) {
       setAllLogs(data.logs || []);
       setSubs(data.subscriptions || []);
       setSettings(data.settings || null);
+      setPresets(data.presets || []);
     } catch (err: any) {
       setError(err.message || "Something went wrong fetching admin registries");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 8 * 1024 * 1024) {
+      setError("File exceeds 8MB storage size limit.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        setPresetFileBase64(event.target.result as string);
+        setPresetAudioUrl(''); // clear direct link if upload is supplied
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleCreatePreset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!presetTitle || !presetTranscript) {
+      setError("Please fill in the title and transcription text.");
+      return;
+    }
+
+    setUploadProgressMsg("Uploading and processing showcase sample...");
+    try {
+      const res = await fetch('/api/admin/presets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: presetTitle,
+          text_transcript: presetTranscript,
+          language: presetLanguage,
+          voice_type: presetVoice,
+          audio_base64: presetFileBase64,
+          audio_url: presetAudioUrl
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setActionSuccessMessage("Showcase Preset Audio added successfully!");
+      setPresetTitle('');
+      setPresetTranscript('');
+      setPresetFileBase64('');
+      setPresetAudioUrl('');
+      
+      // Reset files input element
+      const fileInput = document.getElementById('preset-file-picker') as HTMLInputElement;
+      if (fileInput) fileInput.value = '';
+
+      // Refresh admin dataset
+      fetchAdminData();
+      setTimeout(() => setActionSuccessMessage(null), 3000);
+    } catch (err: any) {
+      setError(err.message || "Failed to create dynamic audio preset");
+    } finally {
+      setUploadProgressMsg(null);
+    }
+  };
+
+  const handleDeletePreset = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this showcase preset?")) return;
+    try {
+      const res = await fetch(`/api/admin/presets/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setActionSuccessMessage("Preset deleted successfully.");
+      fetchAdminData();
+      setTimeout(() => setActionSuccessMessage(null), 3000);
+    } catch (err: any) {
+      setError(err.message);
     }
   };
 
@@ -280,6 +370,17 @@ export default function Admin({ user }: AdminProps) {
           }`}
         >
           System Configs
+        </button>
+
+        <button
+          onClick={() => setActiveTab('presets')}
+          className={`px-4 py-2.5 font-display text-xs font-semibold tracking-wider uppercase border-b-2 bg-transparent text-left cursor-pointer transition-all ${
+            activeTab === 'presets'
+              ? 'border-primary text-primary font-bold'
+              : 'border-transparent text-text-muted hover:text-text-primary'
+          }`}
+        >
+          Preset Showcase ({presets.length})
         </button>
 
       </section>
@@ -725,6 +826,182 @@ export default function Admin({ user }: AdminProps) {
                 </button>
 
               </form>
+            )}
+
+            {/* 6. PRESET SHOWCASE AUDIOS TAB */}
+            {activeTab === 'presets' && (
+              <div className="flex flex-col gap-8 animate-in fade-in duration-150">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  
+                  {/* Register New Preset Audio Form */}
+                  <div className="lg:col-span-1 p-6 bg-card-bg border border-border-custom rounded-2xl flex flex-col gap-5 h-fit">
+                    <div>
+                      <h3 className="font-display text-sm font-bold text-text-primary">Add New Showcase Audio</h3>
+                      <p className="text-[10px] text-text-muted mt-1 leading-relaxed">
+                        Add a sample voice recording to show students and digital creators on the platform home/tools galleries.
+                      </p>
+                    </div>
+
+                    <form onSubmit={handleCreatePreset} className="flex flex-col gap-4">
+                      
+                      <div className="flex flex-col gap-1 text-xs text-text-muted">
+                        <label className="font-semibold text-text-primary">Audio Sample Name/Title</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. Zainab Urdu Welcomer"
+                          value={presetTitle}
+                          onChange={(e) => setPresetTitle(e.target.value)}
+                          className="px-3 py-2 bg-dark-bg border border-border-custom rounded-lg mt-1 text-text-primary focus:outline-none focus:ring-1 focus:ring-primary text-xs"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-1 text-xs text-text-muted">
+                        <label className="font-semibold text-text-primary">Transcript Script (Urdu or English)</label>
+                        <textarea
+                          required
+                          rows={3}
+                          placeholder="Paste or type transcription..."
+                          value={presetTranscript}
+                          onChange={(e) => setPresetTranscript(e.target.value)}
+                          className="px-3 py-2 bg-dark-bg border border-border-custom rounded-lg mt-1 text-text-primary focus:outline-none focus:ring-1 focus:ring-primary text-xs resize-none"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="flex flex-col gap-1 text-xs text-text-muted">
+                          <label className="font-semibold text-text-primary">Dialect/Language</label>
+                          <select
+                            value={presetLanguage}
+                            onChange={(e) => setPresetLanguage(e.target.value as 'ur' | 'en')}
+                            className="px-2 py-2 bg-dark-bg border border-border-custom rounded-lg mt-1 text-text-primary focus:outline-none text-xs"
+                          >
+                            <option value="ur">Urdu (اردو)</option>
+                            <option value="en">English (US/UK)</option>
+                          </select>
+                        </div>
+
+                        <div className="flex flex-col gap-1 text-xs text-text-muted">
+                          <label className="font-semibold text-text-primary">Vocoder Voice Type</label>
+                          <select
+                            value={presetVoice}
+                            onChange={(e) => setPresetVoice(e.target.value as 'male' | 'female')}
+                            className="px-2 py-2 bg-dark-bg border border-border-custom rounded-lg mt-1 text-text-primary focus:outline-none text-xs"
+                          >
+                            <option value="female">Neural Female</option>
+                            <option value="male">Neural Male</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* File upload or link */}
+                      <div className="border-t border-border-custom/50 pt-4 mt-1 flex flex-col gap-3">
+                        <div className="flex flex-col gap-1 text-xs text-text-muted">
+                          <label className="font-semibold text-text-primary">Select Audio File (.mp3/.mpeg/8MB Limit)</label>
+                          <input
+                            type="file"
+                            id="preset-file-picker"
+                            accept="audio/*"
+                            onChange={handleFileChange}
+                            className="block w-full text-xs text-text-primary file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-[10px] file:font-semibold file:bg-primary file:text-white hover:file:bg-opacity-80 mt-1 cursor-pointer"
+                          />
+                        </div>
+
+                        <div className="relative flex py-2 items-center">
+                          <div className="flex-grow border-t border-border-custom/30"></div>
+                          <span className="flex-shrink mx-2 text-[9px] text-text-muted font-mono uppercase">or provide direct URL</span>
+                          <div className="flex-grow border-t border-border-custom/30"></div>
+                        </div>
+
+                        <div className="flex flex-col gap-1 text-xs text-text-muted">
+                          <label className="font-semibold text-text-primary">Audio Remote URL</label>
+                          <input
+                            type="url"
+                            placeholder="https://example.com/audio.mp3"
+                            value={presetAudioUrl}
+                            onChange={(e) => {
+                              setPresetAudioUrl(e.target.value);
+                              setPresetFileBase64(''); // clear upload if direct URL is supplied
+                            }}
+                            className="px-3 py-2 bg-dark-bg border border-border-custom rounded-lg mt-1 text-text-primary focus:outline-none focus:ring-1 focus:ring-primary text-xs"
+                          />
+                        </div>
+                      </div>
+
+                      {uploadProgressMsg && (
+                        <div className="text-[10px] font-mono text-secondary animate-pulse mt-1">
+                          ⚡ {uploadProgressMsg}
+                        </div>
+                      )}
+
+                      <button
+                        type="submit"
+                        disabled={!!uploadProgressMsg}
+                        className="w-full py-2.5 bg-primary hover:bg-[#574feb] text-white font-semibold text-xs rounded-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow shadow-primary/20 transition-all mt-2"
+                      >
+                        Publish Showcase Audio
+                      </button>
+
+                    </form>
+                  </div>
+
+                  {/* Showcase Preset Audios List Directory */}
+                  <div className="lg:col-span-2 p-6 bg-card-bg border border-border-custom rounded-2xl flex flex-col gap-6">
+                    <div>
+                      <h3 className="font-display text-sm font-bold text-text-primary">Active Preset Audio Gallery ({presets.length})</h3>
+                      <p className="text-[10px] text-text-muted mt-1">
+                        These are pre-synthesized vocal announcements or sample audioclips available for immediate visitor review.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col gap-3">
+                      {presets.length === 0 ? (
+                        <div className="p-10 border border-dashed border-border-custom rounded-xl text-center">
+                          <Volume2 className="h-8 w-8 text-text-muted mx-auto mb-2 opacity-40" />
+                          <p className="text-xs text-text-muted">No custom preset audios loaded yet.</p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {presets.map((preset) => (
+                            <div key={preset.id} className="p-4 bg-[#12121a] border border-border-custom/80 rounded-xl flex flex-col justify-between gap-3">
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center justify-between gap-2">
+                                  <span className="font-display text-xs font-bold text-text-primary truncate">{preset.title}</span>
+                                  <div className="flex gap-1">
+                                    <span className="text-[8px] font-mono font-bold bg-primary/10 border border-primary/20 text-primary px-1.5 py-0.5 rounded uppercase">
+                                      {preset.language}
+                                    </span>
+                                    <span className="text-[8px] font-mono font-bold bg-secondary/15 border border-secondary/25 text-secondary px-1.5 py-0.5 rounded uppercase">
+                                      {preset.voice_type}
+                                    </span>
+                                  </div>
+                                </div>
+                                <p className="text-[10px] text-text-muted italic line-clamp-2 mt-1 leading-normal">
+                                  "{preset.text_transcript}"
+                                </p>
+                              </div>
+
+                              <div className="flex items-center justify-between border-t border-border-custom/30 pt-3 mt-1.5">
+                                <audio src={preset.audio_url} controls className="w-10/12 h-6 scale-90 -ml-3 select-none outline-none focus:outline-none" />
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeletePreset(preset.id)}
+                                  className="p-1.5 text-text-muted hover:text-red-400 bg-transparent hover:bg-red-400/5 rounded-md cursor-pointer transition-colors"
+                                  title="Delete Preset"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
             )}
 
           </div>

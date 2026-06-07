@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Sparkles, Info, Languages, Shield, HelpCircle, FileText, CheckCircle2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Sparkles, Info, Languages, Shield, HelpCircle, FileText, CheckCircle2, Volume2, Play } from 'lucide-react';
 import { UserProfile } from '../../types';
 import TTSForm from '../tts/TTSForm';
 import AudioPlayer from '../tts/AudioPlayer';
@@ -10,6 +10,19 @@ interface ToolsProps {
 
 export default function Tools({ user }: ToolsProps) {
   const [audioResult, setAudioResult] = useState<{ audioUrl: string; downloadUrl: string; text: string } | null>(null);
+  const [presets, setPresets] = useState<any[]>([]);
+  const [loadingPresets, setLoadingPresets] = useState(false);
+
+  useEffect(() => {
+    setLoadingPresets(true);
+    fetch('/api/presets')
+      .then(res => res.json())
+      .then(data => {
+        setPresets(data.presets || []);
+      })
+      .catch(err => console.error("Failed to load global vocal presets:", err))
+      .finally(() => setLoadingPresets(false));
+  }, []);
 
   const usageGuidelines = [
     {
@@ -164,6 +177,68 @@ export default function Tools({ user }: ToolsProps) {
         </div>
 
       </section>
+
+      {presets && presets.length > 0 && (
+        <section id="vocal-showroom-section" className="mt-16 pt-12 border-t border-border-custom">
+          <div className="flex flex-col gap-2 items-center text-center mb-8">
+            <span className="text-[10px] bg-secondary/10 border border-secondary/20 text-secondary px-2.5 py-1 rounded-full uppercase font-mono font-bold tracking-wider">
+              Vocal Showroom Auditioning
+            </span>
+            <h3 className="font-display text-2xl font-extrabold text-text-primary">
+              Explore Our Natural Voice Demonstrations
+            </h3>
+            <p className="text-xs text-text-muted max-w-lg leading-relaxed">
+              Listen to predefined speech syntheses crafted by our administrators to audit language scripts, voice tones, and emotional cadences natively.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {presets.map((preset) => (
+              <div 
+                key={preset.id} 
+                className="p-5 bg-card-bg/40 border border-border-custom hover:border-primary/25 rounded-2xl flex flex-col justify-between gap-4 transition-all duration-150 hover:-translate-y-0.5"
+              >
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between gap-1.5">
+                    <span className="font-display text-xs font-bold text-text-primary leading-tight truncate">{preset.title}</span>
+                    <div className="flex gap-1">
+                      <span className="text-[8px] font-mono font-bold bg-primary/10 border border-primary/20 text-primary px-1.5 py-0.5 rounded uppercase">
+                        {preset.language}
+                      </span>
+                      <span className="text-[8px] font-mono font-bold bg-secondary/15 border border-secondary/25 text-secondary px-1.5 py-0.5 rounded uppercase">
+                        {preset.voice_type === 'female' ? 'Female ♀' : 'Male ♂'}
+                      </span>
+                    </div>
+                  </div>
+                  <blockquote className="text-xs text-text-muted italic leading-relaxed border-l-2 border-border-custom pl-3 mt-1 py-0.5">
+                    "{preset.text_transcript}"
+                  </blockquote>
+                </div>
+
+                <div className="flex items-center gap-2 border-t border-border-custom/30 pt-4 mt-1">
+                  <button
+                    onClick={() => {
+                      setAudioResult({
+                        audioUrl: preset.audio_url,
+                        downloadUrl: preset.audio_url,
+                        text: preset.text_transcript
+                      });
+                      setTimeout(() => {
+                        const playerEl = document.getElementById('audio-out-section');
+                        if (playerEl) playerEl.scrollIntoView({ behavior: 'smooth' });
+                      }, 150);
+                    }}
+                    className="flex-grow py-2 bg-dark-bg hover:bg-card-bg text-text-primary border border-border-custom hover:border-text-muted rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <Play className="h-3 w-3 fill-text-primary shrink-0" />
+                    Load to Interactive Player
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
     </article>
   );

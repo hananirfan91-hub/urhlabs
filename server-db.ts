@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { createClient } from '@supabase/supabase-js';
-import { UserProfile, UsageLog, SubscriptionRequest, SystemSettings, UserRole } from './src/types';
+import { UserProfile, UsageLog, SubscriptionRequest, SystemSettings, UserRole, PresetAudio } from './src/types';
 
 const DB_DIR = path.join(process.cwd(), 'data');
 const DB_FILE = path.join(DB_DIR, 'db.json');
@@ -29,6 +29,7 @@ interface LocalDB {
   users: UserProfile[];
   usage_logs: UsageLog[];
   subscription_requests: SubscriptionRequest[];
+  preset_audios: PresetAudio[];
   settings: Record<string, string>;
   passwords: Record<string, string>; // strictly secret server-side
 }
@@ -39,6 +40,17 @@ const loadLocalDB = (): LocalDB => {
       users: [],
       usage_logs: [],
       subscription_requests: [],
+      preset_audios: [
+        {
+          id: 'preset_1',
+          title: 'Welcome Speech Urdu Zainab',
+          text_transcript: 'مکرمی! یو آر ایچ لیبز میں خوش آمدید، یہاں آپ معیاری آوازیں تیار کر سکتے ہیں۔',
+          language: 'ur',
+          voice_type: 'female',
+          audio_url: '/audio/presets/welcome-urdu.mp3',
+          created_at: new Date().toISOString()
+        }
+      ],
       settings: {
         maintenance_mode: 'false',
         free_user_daily_limit: '3',
@@ -53,13 +65,18 @@ const loadLocalDB = (): LocalDB => {
   }
   try {
     const data = fs.readFileSync(DB_FILE, 'utf8');
-    return JSON.parse(data);
+    const parsed = JSON.parse(data);
+    if (!parsed.preset_audios) {
+      parsed.preset_audios = [];
+    }
+    return parsed;
   } catch (err) {
     console.error("Local DB read error, resetting:", err);
     return {
       users: [],
       usage_logs: [],
       subscription_requests: [],
+      preset_audios: [],
       settings: {},
       passwords: {},
     };
@@ -73,11 +90,12 @@ const saveLocalDB = (db: LocalDB) => {
 // Initialize Supabase if available
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRole = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const isSupabaseConfigured = !!(supabaseUrl && supabaseServiceRole);
+export const isSupabaseConfigured = !!(supabaseUrl && supabaseServiceRole);
 
-const supabase = isSupabaseConfigured ? createClient(supabaseUrl, supabaseServiceRole) : null;
+export const supabase = isSupabaseConfigured ? createClient(supabaseUrl, supabaseServiceRole) : null;
 
 console.log(`[URH LABS DB] Using ${isSupabaseConfigured ? 'Supabase Database' : 'Local JSON Flat-file Database Fallback'}`);
+
 
 export const dbService = {
   isSupabase: isSupabaseConfigured,
@@ -494,5 +512,68 @@ export const dbService = {
     local.usage_logs = local.usage_logs.filter(l => new Date(l.created_at).getTime() >= cutOff.getTime());
     saveLocalDB(local);
     return initialCount - local.usage_logs.length;
+  },
+
+  // Preset Audios operations
+  async getAllPresetAudios(): Promise<PresetAudio[]> {
+    if (supabase) {
+      try {
+        const { data, error } = await supabase.from('preset_audios').select('*').order('created_at', { ascending: false });
+        if (!error && data) return data as PresetAudio[];
+        console.error("Supabase getAllPresetAudios error:", error);
+      } catch (err) {
+        console.error("Supabase getAllPresetAudios exception:", err);
+      }
+    }
+    const local = loadLocalDB();
+    return local.preset_audios || [];
+  },
+
+  async createPresetAudio(title: string, text_transcript: string, language: 'ur' | 'en', voice_type: 'male' | 'female', audio_url: string): Promise<PresetAudio> {
+    const id = 'preset_' + Math.random().toString(36).substr(2, 9);
+    const newPreset: PresetAudio = {
+      id,
+      title,
+      text_transcript,
+      language,
+      voice_type,
+      audio_url,
+      created_at: new Date().toISOString()
+    };
+
+    if (supabase) {
+      try {
+        const { data, error } = await supabase.from('preset_audios').insert(newPreset).select().single();
+        if (!error && data) return data as PresetAudio;
+        console.error("Supabase createPresetAudio error:", error);
+      } catch (err) {
+        console.error("Supabase createPresetAudio exception:", err);
+      }
+    }
+
+    const local = loadLocalDB();
+    if (!local.preset_audios) {
+      local.preset_audios = [];
+    }
+    local.preset_audios.push(newPreset);
+    saveLocalDB(local);
+    return newPreset;
+  },
+
+  async deletePresetAudio(id: string): Promise<void> {
+    if (supabase) {
+      try {
+        const { error } = await supabase.from('preset_audios').delete().eq('id', id);
+        if (!error) return;
+        console.error("Supabase deletePresetAudio error:", error);
+      } catch (err) {
+        console.error("Supabase deletePresetAudio exception:", err);
+      }
+    }
+    const local = loadLocalDB();
+    if (local.preset_audios) {
+      local.preset_audios = local.preset_audios.filter(p => p.id !== id);
+      saveLocalDB(local);
+    }
   }
 };

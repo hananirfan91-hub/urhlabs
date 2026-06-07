@@ -1,38 +1,11 @@
 import fs from 'fs';
 import path from 'path';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { supabase, isSupabaseConfigured } from './server-db';
 
-const isR2Configured = !!(
-  process.env.R2_ENDPOINT &&
-  process.env.R2_ACCESS_KEY_ID &&
-  process.env.R2_SECRET_ACCESS_KEY &&
-  process.env.R2_BUCKET_NAME
-);
-
-let s3Client: S3Client | null = null;
-const bucketName = process.env.R2_BUCKET_NAME || 'urhlabs-audio';
-
-if (isR2Configured) {
-  try {
-    s3Client = new S3Client({
-      endpoint: process.env.R2_ENDPOINT,
-      credentials: {
-        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
-      },
-      region: 'auto',
-    });
-    console.log("[URH LABS R2] Initialized Cloudflare R2 Bucket client");
-  } catch (err) {
-    console.error("[URH LABS R2] Failed to initialize S3 client:", err);
-  }
-} else {
-  console.log("[URH LABS R2] Using Local Filesystem Fallback (uploads will be saved to public/audio)");
-}
+console.log(`[URH LABS STORAGE] Storage backend initialized via ${isSupabaseConfigured ? 'Supabase Storage Buckets' : 'Local Workspace Filesystem'}`);
 
 export const r2Service = {
-  isConfigured: isR2Configured,
+  isConfigured: isSupabaseConfigured,
 
   async uploadAudio(
     userId: string,
@@ -44,40 +17,45 @@ export const r2Service = {
     const dateStr = new Date().toISOString().substring(0, 10); // YYYY-MM-DD
     const timestamp = Date.now();
     const filename = `${timestamp}-${voice}-${lang}.${format}`;
-    const relativePath = `audio/${userId}/${dateStr}/${filename}`;
+    const relativePath = `${userId}/${dateStr}/${filename}`;
 
-    if (s3Client) {
+    // 1. Supabase Storage Upload if configured
+    if (supabase) {
       try {
-        const uploadParams = {
-          Bucket: bucketName,
-          Key: relativePath,
-          Body: audioBuffer,
-          ContentType: format === 'mp3' ? 'audio/mpeg' : 'video/mp4',
-        };
-        await s3Client.send(new PutObjectCommand(uploadParams));
+        console.log(`[URH LABS STORAGE] Uploading audio file to Supabase Bucket "audio" under path: ${relativePath}`);
+        
+        // Convert Buffer to ArrayBuffer/Uint8Array for Supabase JS client compatibility
+        const fileData = new Uint8Array(audioBuffer);
+        const mimeType = format === 'mp3' ? 'audio/mpeg' : 'video/mp4';
 
-        // In a real R2 setup, we can generate real presigned urls or return direct CDN with signed tokens
-        // Playback expires in 1 hour (3600 seconds), download with content-disposition in 5 minutes (300 seconds)
-        // Note: For presigning, we can use GetObjectCommand
-        const { GetObjectCommand } = await import('@aws-sdk/client-s3');
-        const playCommand = new GetObjectCommand({ Bucket: bucketName, Key: relativePath });
-        const downloadCommand = new GetObjectCommand({
-          Bucket: bucketName,
-          Key: relativePath,
-          ResponseContentDisposition: `attachment; filename="${filename}"`,
-        });
+        const { data, error } = await supabase.storage
+          .from('audio')
+          .upload(relativePath, fileData, {
+            contentType: mimeType,
+            upsert: true
+          });
 
-        const playUrl = await getSignedUrl(s3Client, playCommand, { expiresIn: 3600 });
-        const downloadUrl = await getSignedUrl(s3Client, downloadCommand, { expiresIn: 300 });
+        if (error) {
+          console.error("[URH LABS STORAGE] Supabase Storage upload failed, trying local fallback:", error.message);
+        } else {
+          // Get direct public URL
+          const { data: { publicUrl } } = supabase.storage
+            .from('audio')
+            .getPublicUrl(relativePath);
 
-        return { relativePath, playUrl, downloadUrl };
+          console.log(`[URH LABS STORAGE] Supabase Storage upload successful: ${publicUrl}`);
+          return {
+            relativePath: relativePath,
+            playUrl: publicUrl,
+            downloadUrl: `${publicUrl}&download=true`
+          };
+        }
       } catch (err) {
-        console.error("R2 Upload failed:", err);
-        // Fall back to local storage if bucket upload fails
+        console.error("[URH LABS STORAGE] Supabase Storage upload crashed, falling back to local files:", err);
       }
     }
 
-    // Local Filesystem fallback
+    // 2. Local Filesystem fallback
     const targetDir = path.join(process.cwd(), 'public', 'audio', userId, dateStr);
     if (!fs.existsSync(targetDir)) {
       fs.mkdirSync(targetDir, { recursive: true });
@@ -86,10 +64,10 @@ export const r2Service = {
     const targetPath = path.join(targetDir, filename);
     await fs.promises.writeFile(targetPath, audioBuffer);
 
-    // Development local URL paths
+    // Development local URL paths (served from Express static routing)
     const urlPath = `/audio/${userId}/${dateStr}/${filename}`;
     
-    // Play & download URLs are straightforward local server paths
+    console.log(`[URH LABS STORAGE] Saved audio locally: ${urlPath}`);
     return {
       relativePath: urlPath,
       playUrl: urlPath,

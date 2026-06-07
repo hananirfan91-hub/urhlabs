@@ -45,3 +45,14 @@ export interface SystemSettings {
   max_text_length_customer: number;
   auto_delete_days: number;
 }
+
+export interface PresetAudio {
+  id: string;
+  title: string;
+  text_transcript: string;
+  language: 'ur' | 'en';
+  voice_type: 'male' | 'female';
+  audio_url: string;
+  created_at: string;
+}
+

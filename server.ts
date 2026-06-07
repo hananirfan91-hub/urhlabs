@@ -11,6 +11,17 @@ const PORT = 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'urhlabs-jwt-super-secret-key-2026';
 
 app.use(express.json());
+app.use('/audio', express.static(path.join(process.cwd(), 'public', 'audio')));
+
+// Public showcase preset audios
+app.get('/api/presets', async (req, res) => {
+  try {
+    const presets = await dbService.getAllPresetAudios();
+    return res.json({ presets });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message || "Failed to fetch showcase audios" });
+  }
+});
 
 // Pure cookies parser helper middleware
 app.use((req: any, res, next) => {
@@ -328,106 +339,138 @@ app.post('/api/tts', async (req: any, res) => {
 // ADMINISTRATIVE ROUTINGS (/api/admin/*)
 // ============================================
 
-// Overview counts
-app.get('/api/admin/overview', authenticateAdmin, async (req: any, res) => {
+// Complete Admin Registry state fetcher
+app.get('/api/admin/data', authenticateAdmin, async (req: any, res) => {
   try {
     const users = await dbService.getAllUsers();
     const logs = await dbService.getAllLogs();
-    const requests = await dbService.getSubscriptionRequests();
+    const subscriptions = await dbService.getSubscriptionRequests();
     const settings = await dbService.getSettings();
-
-    // Stats
-    const totalUsers = users.length;
-    const pendingSubs = requests.filter(r => r.status === 'pending').length;
-    const totalGenerations = logs.length;
-
-    // Daily generations today
-    const todayStr = new Date().toISOString().substring(0, 10);
-    const generationsToday = logs.filter(l => l.created_at.startsWith(todayStr)).length;
+    const presets = await dbService.getAllPresetAudios();
 
     return res.json({
-      totalUsers,
-      totalGenerations,
-      generationsToday,
-      pendingSubs,
+      users,
+      logs,
+      subscriptions,
       settings,
-      recentLogs: logs.slice(0, 20)
+      presets
     });
   } catch (err: any) {
-    return res.status(500).json({ error: err.message || "Failed to load admin overview" });
+    console.error("[URH LABS ADMIN] Failed to compile admin data registry:", err);
+    return res.status(500).json({ error: err.message || "Failed to load master admin data registries" });
   }
 });
 
-// Users admin
-app.get('/api/admin/users', authenticateAdmin, async (req, res) => {
-  try {
-    const users = await dbService.getAllUsers();
-    return res.json({ users });
-  } catch (err: any) {
-    return res.status(500).json({ error: err.message });
-  }
-});
-
-app.put('/api/admin/users', authenticateAdmin, async (req, res) => {
-  const { userId, role, credits, plan } = req.body;
-  if (!userId || !role) {
-    return res.status(400).json({ error: "user ID and role are required fields" });
+// Update user role and credits allocation
+app.post('/api/admin/users/:userId/role', authenticateAdmin, async (req: any, res) => {
+  const { userId } = req.params;
+  const { role, credits } = req.body;
+  if (!role) {
+    return res.status(400).json({ error: "Role is a required parameter" });
   }
   try {
-    const user = await dbService.updateUserRoleAndCredits(userId, role, parseInt(credits) || 0, plan);
+    const user = await dbService.updateUserRoleAndCredits(userId, role, parseInt(credits) || 0);
     return res.json({ success: true, user });
   } catch (err: any) {
-    return res.status(400).json({ error: err.message });
+    return res.status(400).json({ error: err.message || "Failed to modify user credentials" });
   }
 });
 
-app.delete('/api/admin/users/:id', authenticateAdmin, async (req, res) => {
+// Approve or reject subscription request
+app.post('/api/admin/subscriptions/:requestId', authenticateAdmin, async (req: any, res) => {
+  const { requestId } = req.params;
+  const { action } = req.body; // 'approved' or 'rejected'
+  if (!action) {
+    return res.status(400).json({ error: "Missing required action param" });
+  }
+  try {
+    const request = await dbService.reviewSubscriptionRequest(requestId, action, req.user.email);
+    return res.json({ success: true, request });
+  } catch (err: any) {
+    return res.status(400).json({ error: err.message || "Failed to process manual checkout approval" });
+  }
+});
+
+// Delete user permanently
+app.delete('/api/admin/users/:id', authenticateAdmin, async (req: any, res) => {
   try {
     await dbService.deleteUser(req.params.id);
     return res.json({ success: true });
   } catch (err: any) {
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message || "Failed to purge user record" });
   }
 });
 
-// Subscriptions requests administration
-app.get('/api/admin/subscriptions', authenticateAdmin, async (req, res) => {
+// Custom Admin preset audios CRUD endpoints
+app.post('/api/admin/presets', authenticateAdmin, async (req: any, res) => {
+  const { title, text_transcript, language, voice_type, audio_base64, audio_url } = req.body;
+
+  if (!title || !text_transcript || !language || !voice_type) {
+    return res.status(400).json({ error: "Missing preset information (title, translation script, language, voice)." });
+  }
+
   try {
-    const subscriptions = await dbService.getSubscriptionRequests();
-    return res.json({ subscriptions });
+    let finalAudioUrl = audio_url || '';
+
+    if (audio_base64) {
+      console.log("[URH LABS ADMIN] Received preset audio base64 payload. Decoding...");
+      const cleanBase64 = audio_base64.includes(',') ? audio_base64.split(',')[1] : audio_base64;
+      const audioBuffer = Buffer.from(cleanBase64, 'base64');
+      
+      // Upload to standard storage service (will use Supabase bucket or local static fallbacks)
+      const { playUrl } = await r2Service.uploadAudio('admin', audioBuffer, voice_type, language, 'mp3');
+      finalAudioUrl = playUrl;
+    }
+
+    if (!finalAudioUrl) {
+      return res.status(400).json({ error: "Please either provide an audio file upload or a valid URL link." });
+    }
+
+    const preset = await dbService.createPresetAudio(title, text_transcript, language, voice_type, finalAudioUrl);
+    return res.status(201).json({ success: true, preset });
   } catch (err: any) {
-    return res.status(500).json({ error: err.message });
+    console.error("[URH LABS ADMIN] Preset creation failed:", err);
+    return res.status(400).json({ error: err.message || "Failed to register custom showcase audio" });
   }
 });
 
-app.post('/api/admin/subscriptions/approve', authenticateAdmin, async (req: any, res) => {
-  const { requestId, status } = req.body;
-  if (!requestId || !status) {
-    return res.status(400).json({ error: "Missing required request parameters" });
-  }
+app.delete('/api/admin/presets/:id', authenticateAdmin, async (req: any, res) => {
   try {
-    const request = await dbService.reviewSubscriptionRequest(requestId, status, req.user.email);
-    return res.json({ success: true, request });
+    await dbService.deletePresetAudio(req.params.id);
+    return res.json({ success: true });
   } catch (err: any) {
-    return res.status(400).json({ error: err.message });
+    return res.status(500).json({ error: err.message || "Failed to delete showcase audio" });
   }
 });
 
-// System general settings update
-app.post('/api/admin/settings', authenticateAdmin, async (req, res) => {
-  const { maintenance_mode, free_user_daily_limit, max_text_length_free, max_text_length_customer, auto_delete_days } = req.body;
-  
+// Unified systems settings update support
+app.post('/api/admin/settings', authenticateAdmin, async (req: any, res) => {
+  const { 
+    maintenance_mode, 
+    free_user_daily_limit, 
+    free_daily_limit, // fallback
+    max_text_length_free, 
+    max_free_chars, // fallback
+    max_text_length_customer, 
+    max_premium_chars, // fallback
+    auto_delete_days 
+  } = req.body;
+
   try {
+    const lim = free_user_daily_limit !== undefined ? free_user_daily_limit : free_daily_limit;
+    const lenFree = max_text_length_free !== undefined ? max_text_length_free : max_free_chars;
+    const lenCust = max_text_length_customer !== undefined ? max_text_length_customer : max_premium_chars;
+
     if (maintenance_mode !== undefined) await dbService.updateSetting('maintenance_mode', String(maintenance_mode));
-    if (free_user_daily_limit !== undefined) await dbService.updateSetting('free_user_daily_limit', String(free_user_daily_limit));
-    if (max_text_length_free !== undefined) await dbService.updateSetting('max_text_length_free', String(max_text_length_free));
-    if (max_text_length_customer !== undefined) await dbService.updateSetting('max_text_length_customer', String(max_text_length_customer));
+    if (lim !== undefined) await dbService.updateSetting('free_user_daily_limit', String(lim));
+    if (lenFree !== undefined) await dbService.updateSetting('max_text_length_free', String(lenFree));
+    if (lenCust !== undefined) await dbService.updateSetting('max_text_length_customer', String(lenCust));
     if (auto_delete_days !== undefined) await dbService.updateSetting('auto_delete_days', String(auto_delete_days));
 
     const settings = await dbService.getSettings();
     return res.json({ success: true, settings });
   } catch (err: any) {
-    return res.status(400).json({ error: err.message });
+    return res.status(400).json({ error: err.message || "Failed to update configurations" });
   }
 });
 
