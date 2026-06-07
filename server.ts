@@ -521,9 +521,15 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`[URH LABS PORTAL] Full stack server online at http://localhost:${PORT}`);
-  });
+  if (process.env.VERCEL || process.env.NOW_BUILDER) {
+    console.log(`[URH LABS PORTAL] Full stack API runner mounted serverless`);
+  } else {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`[URH LABS PORTAL] Full stack server online at http://localhost:${PORT}`);
+    });
+  }
 }
 
 startServer();
+
+export default app;
