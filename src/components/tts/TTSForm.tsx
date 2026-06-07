@@ -4,7 +4,7 @@ import { UserProfile } from '../../types';
 
 interface TTSFormProps {
   user: UserProfile | null;
-  onGenerateSuccess: (data: { audioUrl: string; downloadUrl: string; text: string }) => void;
+  onGenerateSuccess: (data: { audioUrl: string; downloadUrl: string; text: string; voice_type?: 'male' | 'female' }) => void;
 }
 
 export default function TTSForm({ user, onGenerateSuccess }: TTSFormProps) {
@@ -95,6 +95,7 @@ export default function TTSForm({ user, onGenerateSuccess }: TTSFormProps) {
         audioUrl: result.audioUrl,
         downloadUrl: result.downloadUrl,
         text: text.trim(),
+        voice_type: voice
       });
     } catch (err: any) {
       setError(err.message || "Something went wrong during conversion.");

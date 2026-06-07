@@ -7,15 +7,16 @@ interface AudioPlayerProps {
   downloadUrl: string;
   textScopeForVideo?: string; // used for MP4 generation preview
   onProgress?: (percent: number) => void;
+  voiceType?: 'male' | 'female';
 }
 
-export default function AudioPlayer({ audioUrl, downloadUrl, textScopeForVideo = "URH LABS AI Voice generation output" }: AudioPlayerProps) {
+export default function AudioPlayer({ audioUrl, downloadUrl, textScopeForVideo = "URH LABS AI Voice generation output", voiceType = 'female' }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(0.85);
   const [speed, setSpeed] = useState<number>(1.0);
-  const [pitch, setPitch] = useState<'low' | 'normal' | 'high'>('normal');
+  const [pitch, setPitch] = useState<'low' | 'normal' | 'high'>(voiceType === 'male' ? 'low' : 'normal');
   const [isRecordingVideo, setIsRecordingVideo] = useState(false);
   const [videoDownloadUrl, setVideoDownloadUrl] = useState<string | null>(null);
 
@@ -23,6 +24,11 @@ export default function AudioPlayer({ audioUrl, downloadUrl, textScopeForVideo =
   const audioContextRef = useRef<AudioContext | null>(null);
   const filterNodeRef = useRef<BiquadFilterNode | null>(null);
   const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
+
+  // Sync pitch with voice type updates
+  useEffect(() => {
+    setPitch(voiceType === 'male' ? 'low' : 'normal');
+  }, [voiceType, audioUrl]);
 
   // Initialize and update Audio Player
   useEffect(() => {

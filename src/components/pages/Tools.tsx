@@ -96,6 +96,7 @@ export default function Tools({ user }: ToolsProps) {
                 audioUrl={audioResult.audioUrl} 
                 downloadUrl={audioResult.downloadUrl} 
                 textScopeForVideo={audioResult.text} 
+                voiceType={audioResult.voice_type}
               />
             </div>
           )}
@@ -130,10 +131,10 @@ export default function Tools({ user }: ToolsProps) {
           <div className="bg-card-bg border border-border-custom p-5 rounded-2xl flex flex-col gap-3 text-xs">
             <h3 className="font-display text-sm font-bold text-text-primary flex items-center gap-2 border-b border-border-custom pb-3">
               <Shield className="h-4 w-4 text-secondary" />
-              R2 Storage & Privacy Policy
+              Private Storage & Privacy Policy
             </h3>
             <p className="text-text-muted leading-relaxed">
-              We value files security. All produced audio is stored inside private, encrypted buckets powered by <strong>Cloudflare R2</strong>.
+              We value files security. All produced audio is stored inside private, encrypted buckets powered by our <strong>Secure Cloud Storage</strong> system.
             </p>
             <ul className="flex flex-col gap-1.5 text-[11px] text-text-muted p-0 m-0 list-none mt-1">
               <li className="flex items-center gap-1.5">
@@ -221,7 +222,8 @@ export default function Tools({ user }: ToolsProps) {
                       setAudioResult({
                         audioUrl: preset.audio_url,
                         downloadUrl: preset.audio_url,
-                        text: preset.text_transcript
+                        text: preset.text_transcript,
+                        voice_type: preset.voice_type
                       });
                       setTimeout(() => {
                         const playerEl = document.getElementById('audio-out-section');
@@ -239,6 +241,46 @@ export default function Tools({ user }: ToolsProps) {
           </div>
         </section>
       )}
+
+      {/* TOOLS PAGE SEO EXPANSION UNITS */}
+      <section id="tools-seo-educational-framework" className="mx-auto max-w-7xl mt-16 pt-12 border-t border-border-custom/30">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          
+          {/* Unit 1 */}
+          <div className="p-6 bg-card-bg/40 border border-border-custom rounded-2xl flex flex-col gap-3">
+            <h4 className="font-display text-sm font-bold text-text-primary flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-primary shrink-0"></span>
+              Nastaliq & Unicode Text Parser Integration
+            </h4>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              Our workspace features full support for native Arabic Unicode characters. Users can paste standard Urdu newspaper articles, blog posts, and novels without pre-formatting. The parser processes standard text into sequential, high-speed neural speech streams, ensuring that grammatical symbols are respected in the audio.
+            </p>
+          </div>
+
+          {/* Unit 2 */}
+          <div className="p-6 bg-card-bg/40 border border-border-custom rounded-2xl flex flex-col gap-3">
+            <h4 className="font-display text-sm font-bold text-text-primary flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-secondary shrink-0"></span>
+              Vocal Range & Pitch Customization Filters
+            </h4>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              Every generation can be micro-tuned inside our Interactive Player. Using advanced Web Audio elements, creators can adjust speed dials from comfortable 0.5x studying guidelines up to rapid 2.0x video outlines. Shift pitches from deep low male bass timbres to bright female high-end timbres on the fly.
+            </p>
+          </div>
+
+          {/* Unit 3 */}
+          <div className="p-6 bg-card-bg/40 border border-border-custom rounded-2xl flex flex-col gap-3">
+            <h4 className="font-display text-sm font-bold text-text-primary flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-primary shrink-0"></span>
+              Secure Database Audio History & Storage Limits
+            </h4>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              To keep systems fast and protect your privacy, we log and encrypt your generation streams on a private cloud bucket setting. Standard accounts receive immediate secure downloads of high-fidelity MP3 and MP4 files, complete with real-time waveform visualizers that are ready to sync into your video editing timelines.
+            </p>
+          </div>
+
+        </div>
+      </section>
 
     </article>
   );

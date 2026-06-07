@@ -163,7 +163,7 @@ export default function Contact() {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[10px] text-text-muted uppercase tracking-wider font-semibold font-display">WhatsApp Hotline Support</span>
-                  <span className="text-xs text-text-primary font-medium font-mono mt-0.5">+92 300 1234567</span>
+                  <span className="text-xs text-text-primary font-medium font-mono mt-0.5">+92 310 6359235</span>
                 </div>
               </div>
 
@@ -185,7 +185,7 @@ export default function Contact() {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[10px] text-text-muted uppercase tracking-wider font-semibold font-display">Headquarters Location</span>
-                  <span className="text-xs text-text-primary font-medium mt-0.5">Islamabad Capital Territory, Pakistan</span>
+                  <span className="text-xs text-text-primary font-medium mt-0.5">Babar Colony, RYK, Pakistan</span>
                 </div>
               </div>
 
@@ -202,6 +202,46 @@ export default function Contact() {
 
         </div>
 
+      </section>
+
+      {/* CONTACT PAGE SEO INFORMATION UNITS */}
+      <section id="contact-seo-coordinates" className="mx-auto max-w-7xl mt-16 pt-12 border-t border-border-custom/30 text-left">
+        <h3 className="font-display text-lg font-bold text-text-primary mb-6 text-center">
+          Administrative Helpdesk and Regional Support Infrastructure
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          
+          {/* Contact Box 1 */}
+          <div className="p-6 bg-card-bg/40 border border-border-custom rounded-2xl flex flex-col gap-2">
+            <h4 className="font-display text-xs font-semibold text-text-primary uppercase tracking-wider text-primary">
+              1. Physical Address Headquarters in Rahim Yar Khan
+            </h4>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              Our core engineering team operates directly from Babar Colony, RYK, Pakistan. While we manage our cloud servers remotely, this local presence helps us coordinate speech synthesis research and organize local language vocoder optimizations with native Urdu vocal actors.
+            </p>
+          </div>
+
+          {/* Contact Box 2 */}
+          <div className="p-6 bg-card-bg/40 border border-border-custom rounded-2xl flex flex-col gap-2">
+            <h4 className="font-display text-xs font-semibold text-text-primary uppercase tracking-wider text-secondary">
+              2. WhatsApp Hotline & Manual Payment Activations
+            </h4>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              To guarantee bulletproof security and offer convenient local deposit channels, our billing matches manual checks. Message our verified hotline at (+92 310 6359235) to receive rapid status notifications on Easypaisa, JazzCash, or local wire transfers. We resolve inquiries in under 24 hours.
+            </p>
+          </div>
+
+          {/* Contact Box 3 */}
+          <div className="p-6 bg-card-bg/40 border border-border-custom rounded-2xl flex flex-col gap-2">
+            <h4 className="font-display text-xs font-semibold text-text-primary uppercase tracking-wider text-primary">
+              3. Custom Corporate API Integrations
+            </h4>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              Are you an institutional developer or a regional broadcaster looking to link massive text files to a customized voice api pipeline? Feel free to open a partnership support request. Our administrators will organize a dedicated storage bucket limit and arrange flat pricing rates tailored to your business.
+            </p>
+          </div>
+
+        </div>
       </section>
 
     </article>

@@ -13,7 +13,6 @@ export default function Login({ onLoginSuccess }: LoginProps) {
   const [password, setPassword] = useState('');
   const [captchaValid, setCaptchaValid] = useState(false);
   const [captchaExpected, setCaptchaExpected] = useState<number | null>(null);
-  const [captchaAnswer, setCaptchaAnswer] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -44,7 +43,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
         body: JSON.stringify({
           email: email.trim(),
           password,
-          captchaAnswer,
+          captchaAnswer: captchaExpected,
           _captchaExpected: captchaExpected, // pass expected to server for verification
         }),
       });
@@ -133,21 +132,6 @@ export default function Login({ onLoginSuccess }: LoginProps) {
             }} 
           />
 
-          {/* Captcha validation tracking hidden input hook */}
-          <div className="flex flex-col gap-1.5 text-xs font-semibold text-text-muted">
-            <input
-              type="number"
-              required
-              value={captchaAnswer}
-              onChange={(e) => {
-                setCaptchaAnswer(e.target.value);
-                setCaptchaValid(parseInt(e.target.value) === captchaExpected);
-              }}
-              placeholder="Enter Captcha answer here..."
-              className="px-3 py-2 bg-dark-bg border border-border-custom rounded-lg font-sans focus:outline-none focus:ring-1 focus:ring-primary text-sm font-medium text-text-primary"
-            />
-          </div>
-
           {/* Error notifications */}
           {error && (
             <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-2 text-[11px] text-red-100 font-medium leading-normal">
@@ -187,17 +171,6 @@ export default function Login({ onLoginSuccess }: LoginProps) {
             <Link to="/signup" className="text-primary hover:underline font-semibold">
               Create Free Account
             </Link>
-          </div>
-
-          {/* Quick Evaluate tool helper */}
-          <div className="mt-4 p-2.5 bg-secondary/5 rounded border border-secondary/10 text-left text-[11px] text-text-muted">
-            <p className="font-semibold text-secondary flex items-center gap-1">
-              <Sparkles className="h-3 w-3 animate-pulse" />
-              Evaluation Sandbox Admin Fast-Login:
-            </p>
-            <p className="mt-1">
-              Type or paste <strong className="text-text-primary">hananirfan91@gmail.com</strong> with password <strong className="text-text-primary">12345678</strong> (or create dynamic password) and we will automatically provision administrative levels.
-            </p>
           </div>
 
         </form>

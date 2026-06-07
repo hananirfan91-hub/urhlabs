@@ -44,8 +44,29 @@ export default function Header({ user, onLogout, theme, toggleTheme }: HeaderPro
           onClick={handleLinkClick}
           className="flex items-center gap-2 hover:opacity-90 transition-opacity"
         >
-          <div className="p-2 bg-gradient-to-tr from-primary to-secondary rounded-lg text-[#0a0a0f]">
-            <AudioLines className="h-5 w-5" />
+          <div className="p-1 px-1.5 bg-card-bg/85 rounded-xl border border-border-custom shadow-inner flex items-center justify-center">
+            <svg className="h-7.5 w-7.5 text-primary" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M25 30V58C25 67 31 74 41 74C51 74 57 67 57 58V30" stroke="url(#logo-grad-u)" strokeWidth="9" strokeLinecap="round"/>
+              <path d="M57 30V74" stroke="currentColor" strokeWidth="9" strokeLinecap="round"/>
+              <path d="M38 48H80" stroke="url(#logo-grad-h)" strokeWidth="9" strokeLinecap="round"/>
+              <path d="M80 30V74" stroke="url(#logo-grad-b)" strokeWidth="9" strokeLinecap="round"/>
+              <circle cx="80" cy="52" r="5" fill="#00d9a6" className="animate-ping" />
+              <circle cx="80" cy="52" r="4.5" fill="#00d9a6" />
+              <defs>
+                <linearGradient id="logo-grad-u" x1="25" y1="30" x2="57" y2="74" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#6c63ff"/>
+                  <stop offset="1" stopColor="#8d84ff"/>
+                </linearGradient>
+                <linearGradient id="logo-grad-h" x1="38" y1="48" x2="80" y2="48" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#6c63ff"/>
+                  <stop offset="1" stopColor="#00d9a6"/>
+                </linearGradient>
+                <linearGradient id="logo-grad-b" x1="80" y1="30" x2="80" y2="74" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#00d9a6"/>
+                  <stop offset="1" stopColor="#00f3bc"/>
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
           <div className="flex flex-col">
             <span className="font-display text-lg font-bold tracking-tight text-text-primary">

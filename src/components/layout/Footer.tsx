@@ -10,8 +10,28 @@ export default function Footer() {
           {/* Column 1: Brand Info */}
           <div className="flex flex-col gap-4">
             <Link to="/" className="flex items-center gap-2">
-              <div className="p-2 bg-gradient-to-tr from-primary to-secondary rounded-lg text-[#0a0a0f]">
-                <AudioLines className="h-4.5 w-4.5" />
+              <div className="p-1 px-1.5 bg-card-bg/85 rounded-xl border border-border-custom shadow-inner flex items-center justify-center scale-90">
+                <svg className="h-7 w-7 text-primary" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M25 30V58C25 67 31 74 41 74C51 74 57 67 57 58V30" stroke="url(#logo-grad-u-footer)" strokeWidth="9" strokeLinecap="round"/>
+                  <path d="M57 30V74" stroke="currentColor" strokeWidth="9" strokeLinecap="round"/>
+                  <path d="M38 48H80" stroke="url(#logo-grad-h-footer)" strokeWidth="9" strokeLinecap="round"/>
+                  <path d="M80 30V74" stroke="url(#logo-grad-b-footer)" strokeWidth="9" strokeLinecap="round"/>
+                  <circle cx="80" cy="52" r="4.5" fill="#00d9a6" />
+                  <defs>
+                    <linearGradient id="logo-grad-u-footer" x1="25" y1="30" x2="57" y2="74" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#6c63ff"/>
+                      <stop offset="1" stopColor="#8d84ff"/>
+                    </linearGradient>
+                    <linearGradient id="logo-grad-h-footer" x1="38" y1="48" x2="80" y2="48" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#6c63ff"/>
+                      <stop offset="1" stopColor="#00d9a6"/>
+                    </linearGradient>
+                    <linearGradient id="logo-grad-b-footer" x1="80" y1="30" x2="80" y2="74" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#00d9a6"/>
+                      <stop offset="1" stopColor="#00f3bc"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
               </div>
               <span className="font-display text-base font-bold tracking-tight text-text-primary">
                 URH LABS
@@ -27,7 +47,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-2 text-[11px] text-text-muted">
                 <PhoneCall className="h-3.5 w-3.5 text-secondary" />
-                <span>+92 300 1234567 (WhatsApp)</span>
+                <span>+92 310 6359235 (WhatsApp)</span>
               </div>
             </div>
           </div>
@@ -124,7 +144,7 @@ export default function Footer() {
             <span className="text-[10px] text-text-muted">Powered securely by</span>
             <span className="font-mono text-[10px] font-semibold text-text-primary">Supabase</span>
             <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-            <span className="font-mono text-[10px] font-semibold text-text-primary">Cloudflare R2</span>
+            <span className="font-mono text-[10px] font-semibold text-text-primary">Private Cloud Storage</span>
           </div>
         </div>
       </div>

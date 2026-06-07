@@ -39,14 +39,14 @@ export default function Terms() {
         <section className="flex flex-col gap-2">
           <h3 className="font-display text-base font-bold text-text-primary">3. Manual Billing Agreement</h3>
           <p>
-            Because we use manual payment verification instead of standard automated Stripe credit card handlers, plan upgrades (Credits assigned) are processed on a human-audit basis. We make best efforts to activate approved plans in under 24 hours. ALL SALES ARE FINAL. Refund requests are audited on WhatsApp (+92 300 1234567) or via support tickets.
+            Because we use manual payment verification instead of standard automated Stripe credit card handlers, plan upgrades (Credits assigned) are processed on a human-audit basis. We make best efforts to activate approved plans in under 24 hours. ALL SALES ARE FINAL. Refund requests are audited on WhatsApp (+92 310 6359235) or via support tickets.
           </p>
         </section>
 
         <section className="flex flex-col gap-2">
           <h3 className="font-display text-base font-bold text-text-primary">4. Cloud Storage & Content Retentions</h3>
           <p>
-            We back up your generated voice clips private and encrypted using **Cloudflare R2 storage** buckets. Free tier outputs may undergo garbage collection deletions after 30 days of inactivity to save storage space. Active Premium customer accounts are guaranteed secure retention logs for 90 days.
+            We back up your generated voice clips private and encrypted using **secure private cloud storage** buckets. Free tier outputs may undergo garbage collection deletions after 30 days of inactivity to save storage space. Active Premium customer accounts are guaranteed secure retention logs for 90 days.
           </p>
         </section>
 
@@ -55,6 +55,40 @@ export default function Terms() {
           <p>
             URH LABS is delivered 'as-is' without guarantees of uninterrupted up-times. Our neural vocalizations are simulated outputs. We assume zero accountability for outcomes resulting from software downtimes, file loss, or business disruptions.
           </p>
+        </section>
+
+        {/* TERMS PAGE SEO RICH SECTIONS */}
+        <section id="terms-seo-blocks" className="mx-auto max-w-7xl mt-12 pt-12 border-t border-border-custom/30 text-left">
+          <h4 className="font-display text-sm font-bold text-text-primary mb-4 text-center">
+            Supplemental Platform Rules, Audio Licenses, & Bot Defenses
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            {/* Box 1 */}
+            <div className="p-4 bg-card-bg/40 border border-border-custom rounded-xl flex flex-col gap-1.5">
+              <span className="font-display text-[10px] font-semibold text-primary uppercase">I. Strict Abuse & Scraper Safeguards</span>
+              <p className="text-[10px] text-text-muted leading-relaxed">
+                To guarantee equal bandwidth and free access for study groups, we monitor pipeline loads. You are forbidden from deploying automated curl bots, writing python scrapers to extract voice packets, or using browser macros to bypass our single math captcha defense gates.
+              </p>
+            </div>
+
+            {/* Box 2 */}
+            <div className="p-4 bg-card-bg/40 border border-border-custom rounded-xl flex flex-col gap-1.5">
+              <span className="font-display text-[10px] font-semibold text-secondary uppercase">II. Full Intellectual Properties Clearances</span>
+              <p className="text-[10px] text-text-muted leading-relaxed">
+                URH LABS issues complete commercial clearance licenses for all vocal assets synthesized on Premium plans. You hold complete ownership to compile files into digital presentations, monetize YouTube channels, run advertisement campaigns, and upload custom audio content without watermarks.
+              </p>
+            </div>
+
+            {/* Box 3 */}
+            <div className="p-4 bg-card-bg/40 border border-border-custom rounded-xl flex flex-col gap-1.5">
+              <span className="font-display text-[10px] font-semibold text-primary uppercase">III. Storage Boundaries and Archival Policies</span>
+              <p className="text-[10px] text-text-muted leading-relaxed">
+                All cloud generations are bounded at a maximum of 1 GB private bucket volume per account. Standard inactive sandbox directories undergo scheduled cleaning after 30 days to protect systems, while active pro accounts maintain direct streaming history logs for 90 days.
+              </p>
+            </div>
+
+          </div>
         </section>
 
         <section className="border-t border-border-custompt-6 flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-4">

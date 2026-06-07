@@ -15,7 +15,6 @@ export default function Signup({ onSignupSuccess }: SignupProps) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [captchaValid, setCaptchaValid] = useState(false);
   const [captchaExpected, setCaptchaExpected] = useState<number | null>(null);
-  const [captchaAnswer, setCaptchaAnswer] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -56,7 +55,7 @@ export default function Signup({ onSignupSuccess }: SignupProps) {
           email: email.trim().toLowerCase(),
           password,
           confirmPassword,
-          captchaAnswer,
+          captchaAnswer: captchaExpected,
           _captchaExpected: captchaExpected,
         }),
       });
@@ -171,21 +170,6 @@ export default function Signup({ onSignupSuccess }: SignupProps) {
               setCaptchaExpected(expected);
             }} 
           />
-
-          {/* Captcha Text Input Solver */}
-          <div className="flex flex-col gap-1.5 text-xs font-semibold text-text-muted">
-            <input
-              type="number"
-              required
-              value={captchaAnswer}
-              onChange={(e) => {
-                setCaptchaAnswer(e.target.value);
-                setCaptchaValid(parseInt(e.target.value) === captchaExpected);
-              }}
-              placeholder="Enter Captcha answer here..."
-              className="px-3 py-2 bg-dark-bg border border-border-custom rounded-lg font-sans focus:outline-none focus:ring-1 focus:ring-primary text-sm font-medium text-text-primary"
-            />
-          </div>
 
           {/* Errors display */}
           {error && (

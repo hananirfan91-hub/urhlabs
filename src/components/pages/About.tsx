@@ -16,7 +16,7 @@ export default function About() {
     {
       icon: <ShieldCheck className="h-5 w-5 text-primary" />,
       title: "Security & Privacy First",
-      description: "All assets are secured in private buckets utilizing Cloudflare R2 encryption, protecting user intellectual property completely."
+      description: "All assets are secured in private buckets utilizing Premium Cloud encryption, protecting user intellectual property completely."
     }
   ];
 
@@ -143,6 +143,46 @@ export default function About() {
               </p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ABOUT PAGE SEO SECTIONS */}
+      <section id="about-seo-technical-benchmarks" className="mx-auto max-w-7xl mt-16 pt-12 border-t border-border-custom/30 text-left">
+        <h3 className="font-display text-lg font-bold text-text-primary mb-6 text-center">
+          Our Regional Speech Model Benchmark and Research Scope
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          
+          {/* Pillar detailed Box 1 */}
+          <div className="p-6 bg-card-bg/40 border border-border-custom rounded-2xl flex flex-col gap-2">
+            <h4 className="font-display text-xs font-semibold text-text-primary uppercase tracking-wider text-primary">
+              Acoustic Synthesis of Urdu Unicode Scripts
+            </h4>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              URH LABS began as an effort to fix the lack of accurate representation in global speech synthesizers. By studying acoustic mappings of Urdu language letters and pauses, our research team synthesized a highly accurate phonetic dictionary. This ensures that when complex Unicode words are parsed, local accents sound native.
+            </p>
+          </div>
+
+          {/* Pillar detailed Box 2 */}
+          <div className="p-6 bg-card-bg/40 border border-border-custom rounded-2xl flex flex-col gap-2">
+            <h4 className="font-display text-xs font-semibold text-text-primary uppercase tracking-wider text-secondary">
+              Addressing Regional Dialect Challenges Natively
+            </h4>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              Standard systems often layer Arabic or Indian styles onto Urdu speaker profiles, creating abnormal pronunciations. Our platform utilizes neural vocoder samples tuned specifically to Pakistani dialects. We record and classify clear native voice files to form standard, rich, and naturally humanlike synthesis tracks.
+            </p>
+          </div>
+
+          {/* Pillar detailed Box 3 */}
+          <div className="p-6 bg-card-bg/40 border border-border-custom rounded-2xl flex flex-col gap-2">
+            <h4 className="font-display text-xs font-semibold text-text-primary uppercase tracking-wider text-primary">
+              Secure Cloud Storage Architecture & Watermarking Removal
+            </h4>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              To support professional content creators and local agencies, we remove all audio watermarks entirely. Your generated audio belongs 100% to you. We store these generated waves behind high-security edge buckets with a 1 GB retention cap, keeping your project files highly protected from open web exposure.
+            </p>
+          </div>
+
         </div>
       </section>
 

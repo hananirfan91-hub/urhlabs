@@ -27,7 +27,7 @@ export default function Pricing({ user }: PricingProps) {
         "Urdu + English voices (Male/Female)",
         "Standard voice quality depth",
         "MP3 audio file downloads",
-        "Secure private Cloudflare R2 storage",
+        "1 GB private cloud bucket storage limit",
         "Audio audit history on Dashboard",
         "No audio watermark",
         "Standard email support queue"
@@ -47,7 +47,7 @@ export default function Pricing({ user }: PricingProps) {
         "HD Studio voice quality depth",
         "Fast synthesis server processing",
         "MP3 + MP4 waveform video downloads",
-        "Secure private Cloudflare R2 storage",
+        "1 GB private cloud bucket storage limit",
         "Audio audit history on Dashboard",
         "No audio watermark",
         "Priority support line"
@@ -67,7 +67,7 @@ export default function Pricing({ user }: PricingProps) {
         "Studio Vocal HQ processing depth",
         "Dedicated VIP processing queue",
         "MP3 + MP4 waveform video downloads",
-        "Secure private Cloudflare R2 storage",
+        "1 GB private cloud bucket storage limit",
         "Audio audit history on Dashboard",
         "Beta API keys sandbox access",
         "No audio watermark",
@@ -121,13 +121,7 @@ export default function Pricing({ user }: PricingProps) {
         </h2>
       </section>
 
-      {/* Manual activation alerts banners */}
-      <section className="mb-12 max-w-def mx-auto bg-card-bg/50 border border-border-custom px-4 py-3 rounded-xl flex items-center gap-3 justify-center text-xs">
-        <CreditCard className="h-4.5 w-4.5 text-secondary shrink-0" />
-        <span className="text-text-muted">
-          <strong>Secure Manual Audits:</strong> Bank transfers and local mobile wallets (Easypaisa/Jazzcash) supported. Approved in under 24 hours.
-        </span>
-      </section>
+
 
       {/* Pricing Cards bento-grid */}
       <section id="pricing-cards-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20 items-stretch">
@@ -262,6 +256,46 @@ export default function Pricing({ user }: PricingProps) {
               )}
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* PRICING PAGE SEO SECTIONS */}
+      <section id="pricing-seo-descriptions" className="mx-auto max-w-7xl mt-16 pt-12 border-t border-border-custom/30 text-left">
+        <h3 className="font-display text-lg font-bold text-text-primary mb-6 text-center">
+          Comprehensive Audio Billing & Storage Infrastructure Guidelines
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          
+          {/* Box 1 */}
+          <div className="p-6 bg-card-bg/40 border border-border-custom rounded-2xl flex flex-col gap-2">
+            <h4 className="font-display text-xs font-semibold text-text-primary uppercase tracking-wider text-secondary">
+              1. Flexible Credits Assignment & Character Scopes
+            </h4>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              Our plan tires are built to suit every budget scale. From our Basic bundle providing 30 credits (each credit covers a full distinct synthesis track up to 2500 characters) to Pro levels giving 500 complete high-character generations, you only buy what your workflow needs. No recursive automated cards fees.
+            </p>
+          </div>
+
+          {/* Box 2 */}
+          <div className="p-6 bg-card-bg/40 border border-border-custom rounded-2xl flex flex-col gap-2">
+            <h4 className="font-display text-xs font-semibold text-text-primary uppercase tracking-wider text-primary">
+              2. Secure Manual Payments Verification Loop
+            </h4>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              We leverage direct manual payments verification to protect our networks from fraudulent card chargebacks. Simply select a pack, fill standard contact details, and transfer payment via Bank, Easypaisa, or JazzCash. Our operators verify details in under 24 hours to secure manual account upgrades instantly.
+            </p>
+          </div>
+
+          {/* Box 3 */}
+          <div className="p-6 bg-card-bg/40 border border-border-custom rounded-2xl flex flex-col gap-2">
+            <h4 className="font-display text-xs font-semibold text-text-primary uppercase tracking-wider text-secondary">
+              3. Cloud Storage Capacity & Bucket Archiving Limits
+            </h4>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              All selected packages are linked to a strict 1 GB premium private storage bucket configuration. This provides plenty of space to maintain high-quality MP3 tracks and heavy MP4 waveform video visualizers. We encrypt and retain your audio logs safely without leaking credentials publicly.
+            </p>
+          </div>
+
         </div>
       </section>
 

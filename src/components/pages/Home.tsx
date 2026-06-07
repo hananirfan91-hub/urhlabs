@@ -50,7 +50,7 @@ export default function Home({ user }: HomeProps) {
     },
     {
       icon: <ShieldCheck className="h-5 w-5 text-secondary" />,
-      title: "Cloudflare Secured Auditing",
+      title: "Encrypted Private Auditing",
       description: "All speech files are private-stored with secure token protection. Expiring signed URLs guarantee no public exposure of your assets."
     }
   ];
@@ -343,6 +343,55 @@ export default function Home({ user }: HomeProps) {
               )}
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* SEO ACCELERATION ARTICLES (3 DETAILED SECTIONS) */}
+      <section id="seo-rich-technical-features" className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-16 border-t border-border-custom/30">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          
+          {/* Section 1 */}
+          <div className="p-6 bg-card-bg border border-border-custom hover:border-[#6c63ff]/30 rounded-2xl flex flex-col gap-4 transition-all">
+            <div className="text-primary font-mono text-xs font-bold tracking-widest uppercase">Deep Architecture</div>
+            <h4 className="font-display text-lg font-bold text-text-primary tracking-tight">
+              Deep Learning Speech Synthesis for Urdu Script Parsing
+            </h4>
+            <p className="text-xs text-text-muted leading-relaxed">
+              Our advanced <strong>Urdu AI Text to Speech</strong> system utilizes deep neural vocoder modeling to break down composite Arabic Unicode strings and native Nastaliq symbols. Standard speech synthesizers often fail at complex Urdu pronunciations, treating sentences with Western phonetic rules. 
+            </p>
+            <p className="text-xs text-text-muted leading-relaxed">
+              URH LABS addresses this challenge with customized pitch arrays and native linguistic filters. Our framework maps letters to authentic spoken vocal outputs, representing the best quality <strong>Urdu text-to-speech platform</strong> in Pakistan.
+            </p>
+          </div>
+
+          {/* Section 2 */}
+          <div className="p-6 bg-card-bg border border-border-custom hover:border-secondary/30 rounded-2xl flex flex-col gap-4 transition-all">
+            <div className="text-secondary font-mono text-xs font-bold tracking-widest uppercase">Content Creator Suite</div>
+            <h4 className="font-display text-lg font-bold text-text-primary tracking-tight">
+              Automated Voiceovers for Faceless Channels & Reels
+            </h4>
+            <p className="text-xs text-text-muted leading-relaxed">
+              Pioneering video narration workflows across YouTube, Instagram Reels, and TikTok, URH LABS provides the perfect utility for modern content directors. Rather than investing in high-priced studio equipment or hiring vocal actors, creators can synthesize entire Urdu narration guides instantly.
+            </p>
+            <p className="text-xs text-text-muted leading-relaxed">
+              With integrated <strong>HD MP4 waveform video generators</strong>, you can download ready-made social videos containing reactive visual seek bars and synced subtitle text scopes. Build high-retention channels powered by authentic, humanlike male and female voice files.
+            </p>
+          </div>
+
+          {/* Section 3 */}
+          <div className="p-6 bg-card-bg border border-border-custom hover:border-primary/30 rounded-2xl flex flex-col gap-4 transition-all">
+            <div className="text-primary font-mono text-xs font-bold tracking-widest uppercase">Linguistic Optimization</div>
+            <h4 className="font-display text-lg font-bold text-text-primary tracking-tight">
+              Bilingual Synthesis Preserving Native Pakistani Dialects
+            </h4>
+            <p className="text-xs text-text-muted leading-relaxed">
+              Our models utilize multi-speaker acoustic networks to blend localized Urdu accents naturally with clear, neutral-dialect English vocabulary on the fly. This makes it an ideal platform for administrative services, localized IVR telecommunications, local billing notices, and interactive digital courses.
+            </p>
+            <p className="text-xs text-text-muted leading-relaxed">
+              Whether you are converting 2,000-character news reports, school lesson plans, or commercial voiceovers, the platform ensures that the output speech flows natively with accurate regional cadence, pauses, and speech dynamics.
+            </p>
+          </div>
+
         </div>
       </section>
 

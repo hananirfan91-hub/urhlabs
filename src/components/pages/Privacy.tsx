@@ -38,7 +38,7 @@ export default function Privacy() {
             2. High-Grade Storage & Encryption Architectures
           </h3>
           <p>
-            Standard sound outputs are saved to private buckets hosted on **Cloudflare R2** located across optimal edge regions. We do NOT deploy public file indexing or expose raw directory URLs. To read, download, or stream audio items, our Express middleware issues cryptographically secure, short-lived presigned hashes that expire automatically (1 hour for playout streams; 5 minutes for direct MP3 downloads).
+            Standard sound outputs are saved to private buckets hosted on **our secure private cloud storage** located across optimal edge regions. We do NOT deploy public file indexing or expose raw directory URLs. To read, download, or stream audio items, our Express middleware issues cryptographically secure, short-lived presigned hashes that expire automatically (1 hour for playout streams; 5 minutes for direct MP3 downloads).
           </p>
         </section>
 
@@ -54,6 +54,40 @@ export default function Privacy() {
           <p>
             You retain absolute ownership of any scripts and produced sound files. To wipe your transaction logs or erase your account profile permanently from our Supabase tables, toggle triggers on the Dashboard or notify our privacy administrator: <strong>hananirfan91@gmail.com</strong>.
           </p>
+        </section>
+
+        {/* PRIVACY PAGE SEO EXPANSIONS */}
+        <section id="privacy-seo-blocks" className="mx-auto max-w-7xl mt-12 pt-12 border-t border-border-custom/30 text-left">
+          <h4 className="font-display text-sm font-bold text-text-primary mb-4 text-center">
+            Supplemental Safety Policies, Presigned Hash URLs, & Audio Auditing Systems
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            {/* Box 1 */}
+            <div className="p-4 bg-card-bg/40 border border-border-custom rounded-xl flex flex-col gap-1.5">
+              <span className="font-display text-[10px] font-semibold text-primary uppercase">I. Secure Presigned Tokenized Access URLs</span>
+              <p className="text-[10px] text-text-muted leading-relaxed">
+                We store generated MP3 waves securely inside high-performance cloud buckets under strict private guidelines. To prevent unauthorized leeching or public exposure, our database issues cryptographically signed URLs that decay in 60 minutes, ensuring your recordings are entirely private.
+              </p>
+            </div>
+
+            {/* Box 2 */}
+            <div className="p-4 bg-card-bg/40 border border-border-custom rounded-xl flex flex-col gap-1.5">
+              <span className="font-display text-[10px] font-semibold text-secondary uppercase">II. Absolute Script Input Encryption Privacy</span>
+              <p className="text-[10px] text-text-muted leading-relaxed">
+                Your pasted Unicode story text and transcription guidelines are never processed by advertising indexers or sold to corporate models. All text layers are translated securely over HTTPS and garbage collected on synthesis completion, respecting total corporate guidelines and intellectual clearances.
+              </p>
+            </div>
+
+            {/* Box 3 */}
+            <div className="p-4 bg-card-bg/40 border border-border-custom rounded-xl flex flex-col gap-1.5">
+              <span className="font-display text-[10px] font-semibold text-primary uppercase">III. User Profiles and Secure JWT State Cookies</span>
+              <p className="text-[10px] text-text-muted leading-relaxed">
+                We employ standard, client-safe Web HTTP Cookies to support seamless cross-tab page state navigation. We log zero telemetry files, avoid tracking scripts, and enable premium users to purge their database history log structures in one click right from the administrator's settings interface.
+              </p>
+            </div>
+
+          </div>
         </section>
 
         <section className="border-t border-border-custom pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-4">

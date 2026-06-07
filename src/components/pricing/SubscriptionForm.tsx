@@ -146,7 +146,7 @@ export default function SubscriptionForm({ user, selectedPlan, onClose, onSucces
                   type="text"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="e.g. +92 300 1234567"
+                  placeholder="e.g. +92 310 6359235"
                   className="px-3.5 py-2 text-sm bg-dark-bg border border-border-custom rounded-lg text-text-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </div>
