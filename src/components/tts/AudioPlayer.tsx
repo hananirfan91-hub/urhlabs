@@ -7,7 +7,7 @@ interface AudioPlayerProps {
   downloadUrl: string;
   textScopeForVideo?: string; // used for MP4 generation preview
   onProgress?: (percent: number) => void;
-  voiceType?: 'male' | 'female' | 'zainab' | 'sarah' | 'asif' | 'john';
+  voiceType?: 'male' | 'female' | 'zainab' | 'sarah' | 'asif' | 'john' | 'ayesha';
 }
 
 export default function AudioPlayer({ audioUrl, downloadUrl, textScopeForVideo = "URH LABS AI Voice generation output", voiceType = 'zainab' }: AudioPlayerProps) {
@@ -25,23 +25,26 @@ export default function AudioPlayer({ audioUrl, downloadUrl, textScopeForVideo =
   const filterNodeRef = useRef<BiquadFilterNode | null>(null);
   const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
 
-  // Sync pitch and speed rates with custom actor vocal designs
+  // Sync pitch and speed rates with custom actor vocal designs to ensure they sound completely different
   useEffect(() => {
     if (voiceType === 'asif') {
       setPitch('low');
-      setSpeed(0.96);
+      setSpeed(0.85); // Deeper, slower male tone
     } else if (voiceType === 'john') {
       setPitch('low');
-      setSpeed(1.03);
+      setSpeed(1.05); // Professional, fast male
     } else if (voiceType === 'sarah') {
       setPitch('high');
-      setSpeed(1.06);
+      setSpeed(1.11); // Bright, fast female tone
+    } else if (voiceType === 'ayesha') {
+      setPitch('high');
+      setSpeed(0.93); // Soft, silky slow Urdu female tone
     } else if (voiceType === 'zainab') {
       setPitch('normal');
-      setSpeed(1.02);
+      setSpeed(1.0);  // Calm standard female Urdu tone
     } else if (voiceType === 'male') {
       setPitch('low');
-      setSpeed(1.0);
+      setSpeed(0.9);
     } else {
       setPitch('normal');
       setSpeed(1.0);
@@ -90,10 +93,24 @@ export default function AudioPlayer({ audioUrl, downloadUrl, textScopeForVideo =
 
   // Handle speed rate change
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.playbackRate = speed;
+    const audio = audioRef.current;
+    if (audio) {
+      try {
+        // By disabling preservesPitch, speed changes physically stretch and pitch shift the audio wave!
+        // This makes Sarah sound higher and brighter, and Asif sound deeper and chunkier.
+        if (voiceType !== 'male' && voiceType !== 'female') {
+          (audio as any).preservesPitch = false;
+          (audio as any).mozPreservesPitch = false;
+          (audio as any).webkitPreservesPitch = false;
+        } else {
+          (audio as any).preservesPitch = true;
+        }
+      } catch (e) {
+        console.warn("Could not set preservesPitch:", e);
+      }
+      audio.playbackRate = speed;
     }
-  }, [speed]);
+  }, [speed, voiceType]);
 
   // Handle volume update
   useEffect(() => {

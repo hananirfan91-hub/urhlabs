@@ -193,7 +193,7 @@ export const dbService = {
       email,
       name,
       role: email === 'hananirfan91@gmail.com' ? 'admin' : 'user',
-      credits: 0,
+      credits: 3,
       plan: 'free',
       credits_reset_date: new Date().toISOString().substring(0, 10),
       created_at: new Date().toISOString(),

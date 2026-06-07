@@ -4,13 +4,13 @@ import { UserProfile } from '../../types';
 
 interface TTSFormProps {
   user: UserProfile | null;
-  onGenerateSuccess: (data: { audioUrl: string; downloadUrl: string; text: string; voice_type?: 'male' | 'female' | 'zainab' | 'sarah' | 'asif' | 'john' }) => void;
+  onGenerateSuccess: (data: { audioUrl: string; downloadUrl: string; text: string; voice_type?: 'male' | 'female' | 'zainab' | 'sarah' | 'asif' | 'john' | 'ayesha' }) => void;
 }
 
 export default function TTSForm({ user, onGenerateSuccess }: TTSFormProps) {
   const [text, setText] = useState('');
   const [language, setLanguage] = useState<'ur' | 'en'>('ur');
-  const [voice, setVoice] = useState<'male' | 'female' | 'zainab' | 'sarah' | 'asif' | 'john'>('zainab');
+  const [voice, setVoice] = useState<'male' | 'female' | 'zainab' | 'sarah' | 'asif' | 'john' | 'ayesha'>('zainab');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -149,7 +149,7 @@ export default function TTSForm({ user, onGenerateSuccess }: TTSFormProps) {
               <Mic className="h-4 w-4 text-secondary" />
               2. Choose Vocal Actor Profile
             </label>
-            <div className="grid grid-cols-2 gap-2 mt-1">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mt-1">
               {/* Zainab */}
               <button
                 type="button"
@@ -161,7 +161,7 @@ export default function TTSForm({ user, onGenerateSuccess }: TTSFormProps) {
                 }`}
               >
                 <div className="font-display font-medium text-xs">Zainab</div>
-                <div className="text-[10px] opacity-85 mt-0.5 font-normal leading-none">Warm Urdu Female</div>
+                <div className="text-[10px] opacity-85 mt-0.5 font-normal leading-none font-sans">Warm Urdu Female</div>
               </button>
 
               {/* Sarah */}
@@ -175,7 +175,21 @@ export default function TTSForm({ user, onGenerateSuccess }: TTSFormProps) {
                 }`}
               >
                 <div className="font-display font-medium text-xs">Sarah</div>
-                <div className="text-[10px] opacity-85 mt-0.5 font-normal leading-none">Bright English Female</div>
+                <div className="text-[10px] opacity-85 mt-0.5 font-normal leading-none font-sans">Bright English Female</div>
+              </button>
+
+              {/* Ayesha */}
+              <button
+                type="button"
+                onClick={() => setVoice('ayesha')}
+                className={`py-2 px-3 text-left rounded-xl border cursor-pointer transition-all ${
+                  voice === 'ayesha'
+                    ? 'border-secondary bg-secondary/15 text-secondary shadow-lg shadow-secondary/5 font-bold'
+                    : 'border-border-custom bg-dark-bg text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <div className="font-display font-medium text-xs">Ayesha</div>
+                <div className="text-[10px] opacity-85 mt-0.5 font-normal leading-none font-sans">Silk Urdu Female</div>
               </button>
 
               {/* Asif */}
@@ -189,7 +203,7 @@ export default function TTSForm({ user, onGenerateSuccess }: TTSFormProps) {
                 }`}
               >
                 <div className="font-display font-medium text-xs">Asif</div>
-                <div className="text-[10px] opacity-85 mt-0.5 font-normal leading-none">Deep Urdu Male</div>
+                <div className="text-[10px] opacity-85 mt-0.5 font-normal leading-none font-sans">Deep Urdu Male</div>
               </button>
 
               {/* John */}
@@ -203,7 +217,7 @@ export default function TTSForm({ user, onGenerateSuccess }: TTSFormProps) {
                 }`}
               >
                 <div className="font-display font-medium text-xs">John</div>
-                <div className="text-[10px] opacity-85 mt-0.5 font-normal leading-none">Professional English Male</div>
+                <div className="text-[10px] opacity-85 mt-0.5 font-normal leading-none font-sans">Professional Male</div>
               </button>
             </div>
           </div>

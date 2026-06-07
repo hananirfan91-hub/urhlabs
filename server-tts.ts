@@ -40,26 +40,56 @@ function splitTextIntoChunks(text: string, maxLen = 180): string[] {
 }
 
 export const ttsService = {
-  async generateSpeech(text: string, language: 'ur' | 'en', voice: 'male' | 'female' | 'zainab' | 'sarah' | 'asif' | 'john'): Promise<Buffer> {
+  async generateSpeech(text: string, language: 'ur' | 'en', voice: 'male' | 'female' | 'zainab' | 'sarah' | 'asif' | 'john' | 'ayesha'): Promise<Buffer> {
     const customApiUrl = process.env.TTS_API_URL;
     const customApiKey = process.env.TTS_API_KEY;
 
     if (customApiUrl && customApiKey) {
+      const gender = (voice === 'male' || voice === 'asif' || voice === 'john') ? 'male' : 'female';
       try {
-        console.log(`[URH LABS TTS] Calling custom external TTS API: ${customApiUrl}`);
-        const response = await fetch(customApiUrl, {
+        console.log(`[URH LABS TTS] Calling custom external TTS API: ${customApiUrl} with voice: ${voice}`);
+        let response = await fetch(customApiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${customApiKey}`
           },
-          body: JSON.stringify({ text, language, voice })
+          body: JSON.stringify({ 
+            text, 
+            language, 
+            voice,
+            voice_type: voice,
+            gender: gender,
+            vocal_gender: gender
+          })
         });
+
+        // If the custom API does not support exact custom strings and returns an error (like 400 or 422), 
+        // retry gracefully with the standard 'male' or 'female' values to maintain service continuity!
+        if (!response.ok && (response.status === 400 || response.status === 422)) {
+          console.warn(`[URH LABS TTS] Custom TTS returned status ${response.status}. Retrying with sanitized legacy gender voice '${gender}'...`);
+          response = await fetch(customApiUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${customApiKey}`
+            },
+            body: JSON.stringify({ 
+              text, 
+              language, 
+              voice: gender,
+              voice_type: gender,
+              gender: gender,
+              vocal_gender: gender
+            })
+          });
+        }
+
         if (response.ok) {
           const arrayBuffer = await response.arrayBuffer();
           return Buffer.from(arrayBuffer);
         }
-        console.error(`[URH LABS TTS] Custom TTS API failed with status ${response.status}, falling back to free Google Translation TTS`);
+        console.error(`[URH LABS TTS] Custom TTS API failed with status ${response.status}, falling back to Free Google Translation TTS`);
       } catch (err) {
         console.error(`[URH LABS TTS] Custom TTS API crashed, falling back:`, err);
       }
@@ -69,9 +99,17 @@ export const ttsService = {
     const chunks = splitTextIntoChunks(text, 180);
     const buffers: Buffer[] = [];
 
-    // Map locales
-    // 'ur' maps to ur-PK or ur. Google TTS supports tl=ur.
-    const tl = language === 'ur' ? 'ur' : 'en';
+    // Map locales to offer regional/vocal dialect distinctions
+    let tl = language === 'ur' ? 'ur' : 'en';
+    if (language === 'en') {
+      if (voice === 'john') {
+        tl = 'en-au'; // Australian English for professional male accent
+      } else if (voice === 'sarah') {
+        tl = 'en-gb'; // British English for Sarah
+      } else {
+        tl = 'en'; // Standard English US
+      }
+    }
 
     console.log(`[URH LABS TTS] Synthesizing ${chunks.length} text chunks using Google Translation engine (tl=${tl})`);
 

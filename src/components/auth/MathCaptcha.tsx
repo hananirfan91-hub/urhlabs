@@ -50,13 +50,13 @@ export default function MathCaptcha({ onVerify, id = 'captcha' }: MathCaptchaPro
   };
 
   return (
-    <div id={`${id}-wrapper`} className="p-3 bg-dark-bg/50 border border-border-custom rounded-xl flex items-center justify-between gap-2.5 text-xs w-full shadow-inner">
+    <div id={`${id}-wrapper`} className="w-full flex items-center justify-between gap-2 p-2 px-3 bg-dark-bg/65 border border-border-custom rounded-xl shadow-inner text-xs select-none">
       <div className="flex items-center gap-2 shrink-0">
-        <span className="font-display font-medium text-text-muted text-[10px] uppercase tracking-wider select-none">
+        <span className="text-[10px] text-text-muted font-sans font-semibold uppercase tracking-wider select-none leading-none">
           Verify:
         </span>
-        <span className="font-mono text-sm font-bold text-secondary bg-card-bg/80 px-2.5 py-1.5 rounded-lg border border-border-custom select-none tracking-wide text-center min-w-[70px]">
-          {numA}{operation === 'add' ? '+' : '-'}{numB}=
+        <span className="font-mono text-xs font-bold text-secondary bg-card-bg/90 px-3 py-1.5 rounded-lg border border-border-custom select-none tracking-widest text-center min-w-[70px]">
+          {numA}{operation === 'add' ? '+' : '-'}{numB} =
         </span>
       </div>
       
@@ -64,20 +64,20 @@ export default function MathCaptcha({ onVerify, id = 'captcha' }: MathCaptchaPro
         id={id}
         type="number"
         required
-        placeholder="Answer"
+        placeholder="?"
         value={userAnswer}
         onChange={(e) => handleChange(e.target.value)}
-        className="flex-1 min-w-[50px] px-2.5 py-1.5 font-mono text-center bg-dark-bg border border-border-custom rounded-lg focus:outline-none focus:ring-1 focus:ring-primary text-text-primary text-sm font-bold shadow-inner"
+        className="w-16 h-8 text-center font-bold font-mono text-xs bg-dark-bg border border-border-custom rounded-lg focus:outline-none focus:ring-1 focus:ring-primary text-text-primary shadow-inner"
       />
 
       <button
         type="button"
         onClick={generateCaptcha}
-        className="p-1 px-2 text-text-muted hover:text-primary hover:bg-card-bg/60 border border-border-custom/80 rounded-lg cursor-pointer shrink-0 transition-all flex items-center gap-1 font-mono text-[10px]"
-        title="Generate New Equation"
+        className="h-8 px-2.5 text-text-muted hover:text-primary hover:bg-card-bg/80 border border-border-custom/80 rounded-lg cursor-pointer transition-all flex items-center gap-1 font-sans text-[10px] shrink-0"
+        title="Refresh math equation"
       >
         <span>Refresh</span>
-        <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
         </svg>
       </button>
