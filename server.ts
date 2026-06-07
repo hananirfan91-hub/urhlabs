@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import crypto from 'crypto';
+import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import { dbService } from './server-db';
 import { r2Service } from './server-r2';
@@ -491,9 +492,26 @@ async function startServer() {
     // Development Mode: Mount Vite's HMR static files middleware
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: "spa",
+      appType: "custom",
     });
     app.use(vite.middlewares);
+
+    // Serve index.html as a dynamic SPA fallback with live Vite HTML transform
+    app.get('*', async (req, res, next) => {
+      // Avoid intercepting API requests or files with dot extension (like styles, images, raw scripts)
+      if (req.originalUrl.startsWith('/api') || req.originalUrl.includes('.')) {
+        return next();
+      }
+      try {
+        const templatePath = path.resolve(process.cwd(), 'index.html');
+        let template = fs.readFileSync(templatePath, 'utf-8');
+        template = await vite.transformIndexHtml(req.originalUrl, template);
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+      } catch (err: any) {
+        vite.ssrFixStacktrace(err);
+        next(err);
+      }
+    });
   } else {
     // Production Mode: Compile and serve files from /dist build folder
     const distPath = path.join(process.cwd(), 'dist');
