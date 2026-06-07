@@ -15,16 +15,12 @@ export default function Signup({ onSignupSuccess }: SignupProps) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [captchaValid, setCaptchaValid] = useState(false);
   const [captchaExpected, setCaptchaExpected] = useState<number | null>(null);
+  const [captchaAnswer, setCaptchaAnswer] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
   const navigate = useNavigate();
-
-  const handleCaptchaVerify = (isValid: boolean, expected: number) => {
-    setCaptchaValid(isValid);
-    setCaptchaExpected(expected);
-  };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +51,7 @@ export default function Signup({ onSignupSuccess }: SignupProps) {
           email: email.trim().toLowerCase(),
           password,
           confirmPassword,
-          captchaAnswer: captchaExpected,
+          captchaAnswer,
           _captchaExpected: captchaExpected,
         }),
       });
@@ -165,9 +161,10 @@ export default function Signup({ onSignupSuccess }: SignupProps) {
           {/* Captcha */}
           <MathCaptcha 
             id="signup-captcha" 
-            onVerify={(isValid, expected) => {
+            onVerify={(isValid, expected, actualValue) => {
               setCaptchaValid(isValid);
               setCaptchaExpected(expected);
+              setCaptchaAnswer(actualValue);
             }} 
           />
 

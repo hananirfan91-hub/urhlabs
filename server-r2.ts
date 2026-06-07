@@ -47,7 +47,7 @@ export const r2Service = {
           return {
             relativePath: relativePath,
             playUrl: publicUrl,
-            downloadUrl: `${publicUrl}&download=true`
+            downloadUrl: `${publicUrl}?download=true`
           };
         }
       } catch (err) {

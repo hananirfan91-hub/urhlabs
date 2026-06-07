@@ -18,7 +18,7 @@ export interface UsageLog {
   user_email?: string; // helpful for admin logs view
   text_input: string;
   language: 'ur' | 'en';
-  voice_type: 'male' | 'female';
+  voice_type: 'male' | 'female' | 'zainab' | 'sarah' | 'asif' | 'john';
   audio_url: string;
   duration_sec: number;
   format: 'mp3' | 'mp4';
@@ -51,7 +51,7 @@ export interface PresetAudio {
   title: string;
   text_transcript: string;
   language: 'ur' | 'en';
-  voice_type: 'male' | 'female';
+  voice_type: 'male' | 'female' | 'zainab' | 'sarah' | 'asif' | 'john';
   audio_url: string;
   created_at: string;
 }

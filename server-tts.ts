@@ -40,7 +40,7 @@ function splitTextIntoChunks(text: string, maxLen = 180): string[] {
 }
 
 export const ttsService = {
-  async generateSpeech(text: string, language: 'ur' | 'en', voice: 'male' | 'female'): Promise<Buffer> {
+  async generateSpeech(text: string, language: 'ur' | 'en', voice: 'male' | 'female' | 'zainab' | 'sarah' | 'asif' | 'john'): Promise<Buffer> {
     const customApiUrl = process.env.TTS_API_URL;
     const customApiKey = process.env.TTS_API_KEY;
 

@@ -13,16 +13,12 @@ export default function Login({ onLoginSuccess }: LoginProps) {
   const [password, setPassword] = useState('');
   const [captchaValid, setCaptchaValid] = useState(false);
   const [captchaExpected, setCaptchaExpected] = useState<number | null>(null);
+  const [captchaAnswer, setCaptchaAnswer] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
   const navigate = useNavigate();
-
-  const handleCaptchaVerify = (isValid: boolean, expected: number) => {
-    setCaptchaValid(isValid);
-    setCaptchaExpected(expected);
-  };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +39,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
         body: JSON.stringify({
           email: email.trim(),
           password,
-          captchaAnswer: captchaExpected,
+          captchaAnswer,
           _captchaExpected: captchaExpected, // pass expected to server for verification
         }),
       });
@@ -126,9 +122,10 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           {/* Pure React Math CAPTCHA */}
           <MathCaptcha 
             id="login-captcha" 
-            onVerify={(isValid, expected) => {
+            onVerify={(isValid, expected, actualValue) => {
               setCaptchaValid(isValid);
               setCaptchaExpected(expected);
+              setCaptchaAnswer(actualValue);
             }} 
           />
 

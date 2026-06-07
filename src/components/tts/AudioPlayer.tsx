@@ -7,16 +7,16 @@ interface AudioPlayerProps {
   downloadUrl: string;
   textScopeForVideo?: string; // used for MP4 generation preview
   onProgress?: (percent: number) => void;
-  voiceType?: 'male' | 'female';
+  voiceType?: 'male' | 'female' | 'zainab' | 'sarah' | 'asif' | 'john';
 }
 
-export default function AudioPlayer({ audioUrl, downloadUrl, textScopeForVideo = "URH LABS AI Voice generation output", voiceType = 'female' }: AudioPlayerProps) {
+export default function AudioPlayer({ audioUrl, downloadUrl, textScopeForVideo = "URH LABS AI Voice generation output", voiceType = 'zainab' }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(0.85);
   const [speed, setSpeed] = useState<number>(1.0);
-  const [pitch, setPitch] = useState<'low' | 'normal' | 'high'>(voiceType === 'male' ? 'low' : 'normal');
+  const [pitch, setPitch] = useState<'low' | 'normal' | 'high'>('normal');
   const [isRecordingVideo, setIsRecordingVideo] = useState(false);
   const [videoDownloadUrl, setVideoDownloadUrl] = useState<string | null>(null);
 
@@ -25,9 +25,27 @@ export default function AudioPlayer({ audioUrl, downloadUrl, textScopeForVideo =
   const filterNodeRef = useRef<BiquadFilterNode | null>(null);
   const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
 
-  // Sync pitch with voice type updates
+  // Sync pitch and speed rates with custom actor vocal designs
   useEffect(() => {
-    setPitch(voiceType === 'male' ? 'low' : 'normal');
+    if (voiceType === 'asif') {
+      setPitch('low');
+      setSpeed(0.96);
+    } else if (voiceType === 'john') {
+      setPitch('low');
+      setSpeed(1.03);
+    } else if (voiceType === 'sarah') {
+      setPitch('high');
+      setSpeed(1.06);
+    } else if (voiceType === 'zainab') {
+      setPitch('normal');
+      setSpeed(1.02);
+    } else if (voiceType === 'male') {
+      setPitch('low');
+      setSpeed(1.0);
+    } else {
+      setPitch('normal');
+      setSpeed(1.0);
+    }
   }, [voiceType, audioUrl]);
 
   // Initialize and update Audio Player

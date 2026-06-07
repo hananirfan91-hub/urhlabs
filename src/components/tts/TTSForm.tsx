@@ -4,13 +4,13 @@ import { UserProfile } from '../../types';
 
 interface TTSFormProps {
   user: UserProfile | null;
-  onGenerateSuccess: (data: { audioUrl: string; downloadUrl: string; text: string; voice_type?: 'male' | 'female' }) => void;
+  onGenerateSuccess: (data: { audioUrl: string; downloadUrl: string; text: string; voice_type?: 'male' | 'female' | 'zainab' | 'sarah' | 'asif' | 'john' }) => void;
 }
 
 export default function TTSForm({ user, onGenerateSuccess }: TTSFormProps) {
   const [text, setText] = useState('');
   const [language, setLanguage] = useState<'ur' | 'en'>('ur');
-  const [voice, setVoice] = useState<'male' | 'female'>('female');
+  const [voice, setVoice] = useState<'male' | 'female' | 'zainab' | 'sarah' | 'asif' | 'john'>('zainab');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -150,27 +150,60 @@ export default function TTSForm({ user, onGenerateSuccess }: TTSFormProps) {
               2. Choose Vocal Actor Profile
             </label>
             <div className="grid grid-cols-2 gap-2 mt-1">
+              {/* Zainab */}
               <button
                 type="button"
-                onClick={() => setVoice('female')}
-                className={`py-2 px-3 text-sm font-medium rounded-lg border cursor-pointer transition-all ${
-                  voice === 'female'
-                    ? 'border-secondary bg-secondary/15 text-secondary font-bold'
+                onClick={() => setVoice('zainab')}
+                className={`py-2 px-3 text-left rounded-xl border cursor-pointer transition-all ${
+                  voice === 'zainab'
+                    ? 'border-secondary bg-secondary/15 text-secondary shadow-lg shadow-secondary/5 font-bold'
                     : 'border-border-custom bg-dark-bg text-text-muted hover:text-text-primary'
                 }`}
               >
-                Zainab / Sarah (Female)
+                <div className="font-display font-medium text-xs">Zainab</div>
+                <div className="text-[10px] opacity-85 mt-0.5 font-normal leading-none">Warm Urdu Female</div>
               </button>
+
+              {/* Sarah */}
               <button
                 type="button"
-                onClick={() => setVoice('male')}
-                className={`py-2 px-3 text-sm font-medium rounded-lg border cursor-pointer transition-all ${
-                  voice === 'male'
-                    ? 'border-secondary bg-secondary/15 text-secondary font-bold'
+                onClick={() => setVoice('sarah')}
+                className={`py-2 px-3 text-left rounded-xl border cursor-pointer transition-all ${
+                  voice === 'sarah'
+                    ? 'border-secondary bg-secondary/15 text-secondary shadow-lg shadow-secondary/5 font-bold'
                     : 'border-border-custom bg-dark-bg text-text-muted hover:text-text-primary'
                 }`}
               >
-                Asif / John (Male)
+                <div className="font-display font-medium text-xs">Sarah</div>
+                <div className="text-[10px] opacity-85 mt-0.5 font-normal leading-none">Bright English Female</div>
+              </button>
+
+              {/* Asif */}
+              <button
+                type="button"
+                onClick={() => setVoice('asif')}
+                className={`py-2 px-3 text-left rounded-xl border cursor-pointer transition-all ${
+                  voice === 'asif'
+                    ? 'border-secondary bg-secondary/15 text-secondary shadow-lg shadow-secondary/5 font-bold'
+                    : 'border-border-custom bg-dark-bg text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <div className="font-display font-medium text-xs">Asif</div>
+                <div className="text-[10px] opacity-85 mt-0.5 font-normal leading-none">Deep Urdu Male</div>
+              </button>
+
+              {/* John */}
+              <button
+                type="button"
+                onClick={() => setVoice('john')}
+                className={`py-2 px-3 text-left rounded-xl border cursor-pointer transition-all ${
+                  voice === 'john'
+                    ? 'border-secondary bg-secondary/15 text-secondary shadow-lg shadow-secondary/5 font-bold'
+                    : 'border-border-custom bg-dark-bg text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <div className="font-display font-medium text-xs">John</div>
+                <div className="text-[10px] opacity-85 mt-0.5 font-normal leading-none">Professional English Male</div>
               </button>
             </div>
           </div>

@@ -156,11 +156,13 @@ export const dbService = {
           throw new Error("Email already registered");
         }
         
+        const id = 'user_' + Math.random().toString(36).substr(2, 9);
         const newUser = {
+          id,
           email,
           name,
           role: email === 'hananirfan91@gmail.com' ? 'admin' : 'user',
-          credits: 0,
+          credits: 3,
           plan: 'free',
           credits_reset_date: new Date().toISOString().substring(0, 10),
           created_at: new Date().toISOString(),
